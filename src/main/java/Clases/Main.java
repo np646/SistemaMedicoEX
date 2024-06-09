@@ -4,6 +4,8 @@
  */
 package Clases;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Nataly
@@ -14,10 +16,26 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
         Enfermedad enf = new Enfermedad();
-        enf.print();
-        enf.print1();
+
+        //1,1,1,1,1,1,0,0,0,0,0,0,0,0
+        ArrayList<Integer> lista = new ArrayList<>();
+        lista.add(1);
+        lista.add(1);
+        lista.add(1);
+        lista.add(1);
+        lista.add(1);
+        lista.add(1);
+        lista.add(0);
+        lista.add(0);
+        lista.add(0);
+        lista.add(0);
+        lista.add(0);
+        lista.add(0);
+        lista.add(0);
+        lista.add(0);
+        
+        enf.inferencia(lista);
     }
-    
+
 }

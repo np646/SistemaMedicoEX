@@ -7,7 +7,10 @@ package Clases;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 
 /**
@@ -16,15 +19,15 @@ import java.util.Scanner;
  */
 public class Enfermedad {
 
-    private HashMap<Integer, String> listaEnfermedades;
-    private HashMap<String, ArrayList<Integer>> listaSintomas;
+    private Map<Integer, String> listaEnfermedades;
+    private Map<String, ArrayList<Integer>> listaSintomas;
+    private int cantidadSintomas;
 
     public Enfermedad() {
-        this.listaEnfermedades = new HashMap<Integer, String>();
-        this.listaSintomas = new HashMap<String, ArrayList<Integer>>();
+        this.listaEnfermedades = new LinkedHashMap<>();
+        this.listaSintomas = new LinkedHashMap<>();
         cargarEnfermedades();
         cargarSintomas();
-
     }
 
     private void cargarEnfermedades() {
@@ -36,13 +39,13 @@ public class Enfermedad {
                 String[] enfermedades = datos.split(",");
                 int indice = 0;
                 while (enfermedades.length > indice) {
-                    this.listaEnfermedades.put(indice + 1, enfermedades[indice]);
+                    this.listaEnfermedades.put(indice, enfermedades[indice]);
                     indice++;
                 }
             }
             lector.close();
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            System.out.println("Ha ocurrido un error.");
             e.printStackTrace();
         }
     }
@@ -51,47 +54,84 @@ public class Enfermedad {
         try {
             File archivo = new File("Sintomas.txt");
             Scanner lector = new Scanner(archivo);
-            int indiceE = 1;
+            int indiceE = 0;
             while (lector.hasNextLine()) {
                 String datos = lector.nextLine();
                 String[] sintomas = datos.split(",");
-                int indiceS = 1;
                 ArrayList<Integer> valoresSintomas = new ArrayList<>();
-                for (int i = 0; i < indiceE; i++) {
-                    valoresSintomas.add(Integer.valueOf(sintomas[indiceS]));
-                    indiceS++;
+                this.cantidadSintomas = sintomas.length; // para saber cuántos sintomas hay
+                for (int i = 0; i < sintomas.length; i++) {
+                    valoresSintomas.add(Integer.valueOf(sintomas[i]));
                 }
-                /* while (sintomas.length > indiceS) {
-                    valoresSintomas.add(Integer.valueOf(sintomas[indiceS]));
-                    indiceS++;
-                }*/
                 this.listaSintomas.put(this.listaEnfermedades.get(indiceE), valoresSintomas);
                 indiceE++;
             }
             lector.close();
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            System.out.println("Ha ocurrido un error.");
             e.printStackTrace();
         }
     }
 
-    public void print() {
-
-        this.listaEnfermedades.forEach((key, value) -> System.out.println(key + " " + value));
-
+    public void imprimirSintomas() {
+        this.listaSintomas.forEach((key, value) -> System.out.println(key + " " + value));
     }
 
-    public void print1() {
+    public void imprimirEnfermedades() {
+        this.listaEnfermedades.forEach((key, value) -> System.out.println(key + " " + value));
+    }
 
-        for (String sint : this.listaSintomas.keySet()) {
-            System.out.print(sint + ",");
-            for (ArrayList<Integer> enf : this.listaSintomas.values()) {
-                for (int s : enf) {
-                    System.out.print(s + ",");
-                }
-                System.out.println("////");
-            }
+    public void inferencia(ArrayList<Integer> sintomasUsuario) {
+        Map<String, String> resultados = new LinkedHashMap<>();
+        for (String key : this.listaSintomas.keySet()) {
+            ArrayList<Integer> sintomasBDD = this.listaSintomas.get(key);
+            int resp = contarAciertos(sintomasBDD, sintomasUsuario);
+            String porcentaje = aPorcentaje(resp);
+            resultados.put(key, porcentaje);
         }
 
+        Map<String, String> resultadoOrdenado = ordenarPorValor(resultados);
+        imprimirResultados(resultadoOrdenado);
     }
+
+    private int contarAciertos(ArrayList<Integer> sintomasBDD, ArrayList<Integer> sintomasUsuario) {
+        int resultado = 0;
+        int contador = 0;
+        while (contador < sintomasBDD.size()) {
+            if (Objects.equals(sintomasBDD.get(contador), sintomasUsuario.get(contador))) {
+                resultado++;
+            }
+            contador++;
+        }
+        return resultado;
+    }
+
+    private Map<String, String> ordenarPorValor(Map<String, String> resultados) {
+        List<Map.Entry<String, String>> lista = new ArrayList<>(resultados.entrySet());
+
+        lista.sort((entry1, entry2) -> {
+            double value1 = Double.parseDouble(entry1.getValue().replace("%", ""));
+            double value2 = Double.parseDouble(entry2.getValue().replace("%", ""));
+            return Double.compare(value2, value1); // Orden descendente
+        });
+
+        LinkedHashMap<String, String> listaOrdenada = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : lista) {
+            listaOrdenada.put(entry.getKey(), entry.getValue());
+        }
+        return listaOrdenada;
+    }
+
+    private <K, V> void imprimirResultados(Map<K, V> map) {
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+
+    private String aPorcentaje(int valor) {
+        int total = this.cantidadSintomas;
+        double respuesta = ((double) valor * 100) / total;
+        return String.format("%.2f", respuesta) + "%";
+    }
+
 }
