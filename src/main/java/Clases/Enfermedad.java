@@ -81,7 +81,7 @@ public class Enfermedad {
         this.listaEnfermedades.forEach((key, value) -> System.out.println(key + " " + value));
     }
 
-    public void inferencia(ArrayList<Integer> sintomasUsuario) {
+    public String inferencia(ArrayList<Integer> sintomasUsuario) {
         Map<String, String> resultados = new LinkedHashMap<>();
         for (String key : this.listaSintomas.keySet()) {
             ArrayList<Integer> sintomasBDD = this.listaSintomas.get(key);
@@ -91,7 +91,7 @@ public class Enfermedad {
         }
 
         Map<String, String> resultadoOrdenado = ordenarPorValor(resultados);
-        imprimirResultados(resultadoOrdenado);
+        return imprimirResultados(resultadoOrdenado);
     }
 
     private int contarAciertos(ArrayList<Integer> sintomasBDD, ArrayList<Integer> sintomasUsuario) {
@@ -122,10 +122,13 @@ public class Enfermedad {
         return listaOrdenada;
     }
 
-    private <K, V> void imprimirResultados(Map<K, V> map) {
+    private <K, V> String imprimirResultados(Map<K, V> map) {
+        String resultado = "Resultados : \n";
         for (Map.Entry<K, V> entry : map.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
+            //System.out.println(entry.getKey() + ": " + entry.getValue());
+            resultado += entry.getKey() + ": " + entry.getValue() + "\n";
         }
+        return resultado;
     }
 
     private String aPorcentaje(int valor) {
