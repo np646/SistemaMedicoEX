@@ -16,6 +16,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        //DEBUG, solo para pruebas
         Enfermedad enf = new Enfermedad();
 
         //1,1,1,1,1,1,0,0,0,0,0,0,0,0
