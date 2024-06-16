@@ -1,2 +1,1 @@
-# SistemaMedicoEX
 JDK 19
