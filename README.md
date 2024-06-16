@@ -1,2 +1,2 @@
 # SistemaMedicoEX
- Sistema médico experto para diagnosticar enfermedades.
+JDK 19
