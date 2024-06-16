@@ -18,7 +18,8 @@ public class Main {
     public static void main(String[] args) {
         //DEBUG, solo para pruebas
         Enfermedad enf = new Enfermedad();
-
+        
+        //Síntomas para el resfriado común:
         //1,1,1,1,1,1,0,0,0,0,0,0,0,0
         ArrayList<Integer> lista = new ArrayList<>();
         lista.add(1);
@@ -38,5 +39,4 @@ public class Main {
         
         enf.inferencia(lista);
     }
-
 }
